@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SortingLab.Core</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <!-- Алгоритмы всегда собираются с оптимизацией, иначе замеры времени в отладочной сборке
+         показывали бы скорость неоптимизированного кода. -->
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+</Project>

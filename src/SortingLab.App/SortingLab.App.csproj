@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>SortingLab.App</RootNamespace>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <!-- Методы сразу компилируются в оптимизированный код. Без этого первые замеры времени
+         идут на неоптимизированном коде и результаты для малых текстов скачут. -->
+    <TieredCompilation>false</TieredCompilation>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.22" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SortingLab.Core\SortingLab.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Roboto Regular и SemiBold, статические начертания из вариативного Roboto (google/fonts).
+         SIL Open Font License 1.1, копирайт и ссылка на лицензию записаны в метаданных файлов. -->
+    <AvaloniaResource Include="Assets\Fonts\**" />
+  </ItemGroup>
+
+</Project>

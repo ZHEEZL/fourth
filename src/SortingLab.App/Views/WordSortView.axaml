@@ -1,0 +1,136 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sys="using:System"
+             xmlns:vm="using:SortingLab.App.ViewModels"
+             xmlns:words="using:SortingLab.Core.Words"
+             x:Class="SortingLab.App.Views.WordSortView"
+             x:DataType="vm:WordSortViewModel"
+             FontSize="14">
+  <UserControl.Styles>
+    <!-- Столбцы таблицы: числа прижаты вправо, чтобы разряды стояли друг под другом. -->
+    <Style Selector="TextBlock.wordsCell">
+      <Setter Property="Width" Value="96" />
+      <Setter Property="TextAlignment" Value="Right" />
+      <Setter Property="Padding" Value="12,8" />
+    </Style>
+    <Style Selector="TextBlock.timeCell">
+      <Setter Property="Width" Value="208" />
+      <Setter Property="TextAlignment" Value="Right" />
+      <Setter Property="Padding" Value="12,8" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid Margin="8,16,8,16" ColumnDefinitions="5*,24,3*,24,5*">
+
+    <!-- Исходный текст -->
+    <Grid Grid.Column="0" RowDefinitions="Auto,Auto,*,Auto">
+      <TextBlock Classes="title" Text="Текст" />
+      <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,12">
+        <Button Content="Открыть файл…" Click="OnOpenFileClick" />
+        <Button Content="Вставить пример" Command="{Binding UseSampleCommand}" />
+      </StackPanel>
+      <TextBox Grid.Row="2" Text="{Binding InputText}" AcceptsReturn="True" TextWrapping="Wrap"
+               VerticalContentAlignment="Top" />
+      <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" Margin="0,12,0,0">
+        <ComboBox Width="260" ItemsSource="{Binding Sorters}" SelectedItem="{Binding SelectedSorter}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate x:DataType="words:IWordSorter">
+              <TextBlock Text="{Binding Name}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Button Content="Разбить и отсортировать" Classes="accent" Command="{Binding SortTextCommand}" />
+      </StackPanel>
+    </Grid>
+
+    <!-- Отсортированные слова -->
+    <Grid Grid.Column="2" RowDefinitions="Auto,Auto,*">
+      <TextBlock Classes="title" Text="Слова по алфавиту" />
+      <TextBlock Grid.Row="1" Classes="label" Text="{Binding SortSummary}" TextWrapping="Wrap" Margin="0,12" />
+      <ListBox Grid.Row="2" Classes="plain" ItemsSource="{Binding SortedWords}" />
+    </Grid>
+
+    <!-- Замеры времени -->
+    <Grid Grid.Column="4" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*">
+      <TextBlock Classes="title" Text="Замеры времени" />
+
+      <Grid Grid.Row="1" ColumnDefinitions="Auto,12,*" RowDefinitions="Auto,8,Auto" Margin="0,12,0,0">
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Размеры текстов, слов" VerticalAlignment="Center"
+                   Foreground="{StaticResource TextSecondaryBrush}" />
+        <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding SizesText}" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Запусков на каждый размер" VerticalAlignment="Center"
+                   Foreground="{StaticResource TextSecondaryBrush}" />
+        <NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding Repeats}" Minimum="1" Maximum="100"
+                       Increment="1" FormatString="0" Width="128" HorizontalAlignment="Left" />
+      </Grid>
+
+      <StackPanel Grid.Row="2" Spacing="4" Margin="0,16,0,0">
+        <TextBlock Text="Откуда брать слова для замеров" Foreground="{StaticResource TextSecondaryBrush}" />
+        <RadioButton GroupName="WordSource" IsChecked="{Binding TakeFirstWords}"
+                     Content="Первые N слов текста; если их меньше, текст повторяется" />
+        <RadioButton GroupName="WordSource" IsChecked="{Binding TakeRandomWords}"
+                     Content="N случайных слов из текста" />
+      </StackPanel>
+
+      <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" Margin="0,12,0,0">
+        <Button Content="Провести замеры" Classes="accent" Command="{Binding RunExperimentsCommand}" />
+        <Button Content="Сохранить таблицу (CSV)…" Click="OnSaveCsvClick" IsEnabled="{Binding HasTable}" />
+      </StackPanel>
+
+      <TextBlock Grid.Row="4" Text="{Binding ExperimentStatus}" TextWrapping="Wrap" Margin="0,12,0,0" />
+
+      <TextBlock Grid.Row="5" Classes="meta" TextWrapping="Wrap" Margin="0,8,0,16"
+                 Text="Перед замерами каждый алгоритм несколько раз сортирует небольшой набор без учёта времени, чтобы в результат не попала JIT-компиляция. Каждый запуск сортирует новую копию одних и тех же слов." />
+
+      <!-- Таблица результатов -->
+      <Border Grid.Row="6" Classes="card" ClipToBounds="True">
+        <DockPanel>
+          <Border DockPanel.Dock="Top" Background="{StaticResource RaisedBrush}"
+                  BorderBrush="{StaticResource HairlineBrush}" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Classes="wordsCell label" Text="Слов" FontWeight="SemiBold" />
+              <ItemsControl ItemsSource="{Binding TimeHeaders}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="sys:String">
+                    <TextBlock Classes="timeCell label" Text="{Binding}" FontWeight="SemiBold" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </Border>
+          <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding TableRows}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:TableRow">
+                  <Border BorderBrush="{StaticResource HairlineBrush}" BorderThickness="0,0,0,1">
+                    <StackPanel Orientation="Horizontal">
+                      <TextBlock Classes="wordsCell" Text="{Binding Words}" />
+                      <ItemsControl ItemsSource="{Binding Times}">
+                        <ItemsControl.ItemsPanel>
+                          <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                          </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate x:DataType="sys:String">
+                            <TextBlock Classes="timeCell" Text="{Binding}" />
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                    </StackPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </DockPanel>
+      </Border>
+    </Grid>
+  </Grid>
+</UserControl>

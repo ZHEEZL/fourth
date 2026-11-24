@@ -1,0 +1,71 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SortingLab.App.App"
+             RequestedThemeVariant="Light">
+  <Application.Resources>
+    <!-- Нейтральная палитра: поверхности и текст серые, цвет остаётся графику. -->
+    <!-- Шрифт интерфейса: Roboto, встроенный в программу (Regular и SemiBold). -->
+    <FontFamily x:Key="UiFontFamily">avares://SortingLab.App/Assets/Fonts#Roboto</FontFamily>
+    <FontFamily x:Key="ContentControlThemeFontFamily">avares://SortingLab.App/Assets/Fonts#Roboto</FontFamily>
+
+    <SolidColorBrush x:Key="PageBrush" Color="#FAFAFA" />
+    <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="RaisedBrush" Color="#F4F4F5" />
+    <SolidColorBrush x:Key="HairlineBrush" Color="#14171717" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#171717" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#525252" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#737373" />
+    <SolidColorBrush x:Key="ErrorBrush" Color="#DC2626" />
+
+    <!-- Обычные кнопки: белые с тонкой рамкой. Цветная заливка остаётся только у главной кнопки. -->
+    <SolidColorBrush x:Key="ButtonBackground" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#F4F4F5" />
+    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#EBEBEC" />
+    <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="#F4F4F5" />
+    <SolidColorBrush x:Key="ButtonBorderBrush" Color="#24171717" />
+    <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="#33171717" />
+    <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="#33171717" />
+    <SolidColorBrush x:Key="ButtonBorderBrushDisabled" Color="#14171717" />
+    <Thickness x:Key="ButtonBorderThemeThickness">1</Thickness>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme>
+      <FluentTheme.Palettes>
+        <!-- Акцент: синие чернила школьной ручки. -->
+        <ColorPaletteResources x:Key="Light" Accent="#2A52BE" RegionColor="#FAFAFA" ErrorText="#DC2626" />
+      </FluentTheme.Palettes>
+    </FluentTheme>
+
+    <Style Selector="Border.card">
+      <Setter Property="Background" Value="{StaticResource CardBrush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource HairlineBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="8" />
+    </Style>
+    <Style Selector="TextBlock.title">
+      <Setter Property="FontSize" Value="16" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+    </Style>
+    <Style Selector="TextBlock.label">
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+    </Style>
+    <Style Selector="TextBlock.meta">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+    </Style>
+    <Style Selector="ListBox.plain">
+      <Setter Property="Background" Value="{StaticResource CardBrush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource HairlineBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="0,4" />
+    </Style>
+    <Style Selector="ListBox.plain ListBoxItem">
+      <Setter Property="Padding" Value="12,2" />
+      <Setter Property="MinHeight" Value="0" />
+    </Style>
+  </Application.Styles>
+</Application>

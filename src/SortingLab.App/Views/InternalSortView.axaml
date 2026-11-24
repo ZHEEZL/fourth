@@ -1,0 +1,154 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SortingLab.App.ViewModels"
+             xmlns:visual="using:SortingLab.Core.Visual"
+             xmlns:c="using:SortingLab.App.Controls"
+             x:Class="SortingLab.App.Views.InternalSortView"
+             x:DataType="vm:InternalSortViewModel"
+             FontSize="14">
+  <UserControl.Styles>
+    <Style Selector="Border.swatch">
+      <Setter Property="Width" Value="12" />
+      <Setter Property="Height" Value="12" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="StackPanel.legend">
+      <Setter Property="Orientation" Value="Horizontal" />
+      <Setter Property="Spacing" Value="8" />
+      <Setter Property="Margin" Value="0,0,20,4" />
+    </Style>
+    <Style Selector="StackPanel.legend > TextBlock">
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid Margin="8,16,8,16" ColumnDefinitions="*,24,400" RowDefinitions="Auto,Auto,*,Auto,Auto">
+
+    <!-- Исходный массив и выбор алгоритма -->
+    <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal">
+      <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,24,12">
+        <TextBlock Text="Алгоритм" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}" />
+        <ComboBox Width="300" ItemsSource="{Binding Algorithms}" SelectedItem="{Binding SelectedAlgorithm}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate x:DataType="visual:IVisualSorter">
+              <TextBlock Text="{Binding Name}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,24,12">
+        <TextBlock Text="Размер" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}" />
+        <NumericUpDown Value="{Binding ArraySize}" Minimum="2" Maximum="40" Increment="1"
+                       FormatString="0" Width="120" />
+        <Button Content="Случайный массив" Command="{Binding GenerateRandomCommand}" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,12">
+        <TextBlock Text="Свой массив" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}" />
+        <TextBox Text="{Binding CustomArray}" Width="320" Watermark="Например: 5 3 8 1 9 2" />
+        <Button Content="Задать" Command="{Binding ApplyCustomCommand}" />
+      </StackPanel>
+    </WrapPanel>
+
+    <!-- Управление показом -->
+    <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8"
+                Margin="0,0,0,16">
+      <Button Content="Старт" Classes="accent" MinWidth="96" Command="{Binding StartCommand}" />
+      <Button Content="Пауза" MinWidth="96" Command="{Binding PauseCommand}" />
+      <Button Content="Шаг" MinWidth="80" Command="{Binding StepCommand}" />
+      <Button Content="Сначала" MinWidth="96" Command="{Binding ResetCommand}" />
+      <TextBlock Text="Задержка между шагами" VerticalAlignment="Center" Margin="24,0,0,0"
+                 Foreground="{StaticResource TextSecondaryBrush}" />
+      <Slider Width="240" Minimum="50" Maximum="3000" TickFrequency="50" IsSnapToTickEnabled="True"
+              VerticalAlignment="Center" Value="{Binding DelayMs}" />
+      <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding DelayMs, StringFormat='{}{0:0} мс'}" />
+      <TextBlock Text="{Binding InputError}" Foreground="{StaticResource ErrorBrush}" VerticalAlignment="Center"
+                 Margin="16,0,0,0" IsVisible="{Binding InputError, Converter={x:Static ObjectConverters.IsNotNull}}" />
+    </StackPanel>
+
+    <!-- График на тетрадной клетке -->
+    <Border Grid.Row="2" Grid.Column="0" Classes="card" ClipToBounds="True">
+      <c:BarChart Frame="{Binding Frame}" Margin="8" MinHeight="260" />
+    </Border>
+
+    <!-- Легенда -->
+    <WrapPanel Grid.Row="3" Grid.Column="0" Margin="0,12,0,0">
+      <StackPanel Classes="legend">
+        <Border Classes="swatch" Background="{x:Static c:BarChart.NormalBrush}" />
+        <TextBlock Text="Число в рабочей части" />
+      </StackPanel>
+      <StackPanel Classes="legend">
+        <Border Classes="swatch" Background="{x:Static c:BarChart.CompareBrush}" />
+        <TextBlock Text="Сравниваем" />
+      </StackPanel>
+      <StackPanel Classes="legend">
+        <Border Classes="swatch" Background="{x:Static c:BarChart.MoveBrush}" />
+        <TextBlock Text="Переставляем" />
+      </StackPanel>
+      <StackPanel Classes="legend">
+        <Border Classes="swatch" Background="{x:Static c:BarChart.PivotBrush}" />
+        <TextBlock Text="Опорное число" />
+      </StackPanel>
+      <StackPanel Classes="legend">
+        <Border Classes="swatch" Background="{x:Static c:BarChart.HeldBrush}"
+                BorderBrush="{x:Static c:BarChart.CompareBrush}" BorderThickness="1" />
+        <TextBlock Text="Число «в руке»" />
+      </StackPanel>
+      <StackPanel Classes="legend">
+        <Border Classes="swatch" Background="{x:Static c:BarChart.SortedBrush}" />
+        <TextBlock Text="Уже на своём месте" />
+      </StackPanel>
+      <StackPanel Classes="legend">
+        <Border Classes="swatch" Background="{x:Static c:BarChart.FadedBrush}" />
+        <TextBlock Text="Сейчас не участвует" />
+      </StackPanel>
+    </WrapPanel>
+
+    <!-- Пояснение к текущему шагу: квадратик того же цвета, что и столбики на графике -->
+    <Border Grid.Row="4" Grid.Column="0" Classes="card" Margin="0,12,0,0" Padding="20,16" MinHeight="112">
+      <StackPanel Spacing="8">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <Border Classes="swatch" Background="{Binding StepBrush}" />
+          <TextBlock Classes="label" Text="{Binding StepTitle}" FontWeight="SemiBold" />
+        </StackPanel>
+        <TextBlock Text="{Binding Explanation}" TextWrapping="Wrap" FontSize="18" LineHeight="28" />
+      </StackPanel>
+    </Border>
+
+    <!-- Правая колонка: идея алгоритма, счётчики, журнал -->
+    <Grid Grid.Row="2" Grid.RowSpan="3" Grid.Column="2" RowDefinitions="Auto,Auto,Auto,*">
+      <Border Classes="card" Padding="20,16">
+        <StackPanel Spacing="8">
+          <StackPanel Spacing="2">
+            <TextBlock Classes="title" Text="{Binding SelectedAlgorithm.Name}" />
+            <TextBlock Classes="meta" Text="{Binding SelectedAlgorithm.Group}" />
+          </StackPanel>
+          <TextBlock Text="{Binding SelectedAlgorithm.Idea}" TextWrapping="Wrap" LineHeight="20"
+                     Foreground="{StaticResource TextSecondaryBrush}" />
+          <TextBlock Classes="meta" Text="{Binding SelectedAlgorithm.Complexity}" TextWrapping="Wrap" />
+        </StackPanel>
+      </Border>
+
+      <Grid Grid.Row="1" ColumnDefinitions="*,12,*" Margin="0,12">
+        <Border Grid.Column="0" Classes="card" Padding="16,12">
+          <StackPanel Spacing="4">
+            <TextBlock Classes="label" Text="Сравнений" />
+            <TextBlock Text="{Binding Comparisons}" FontSize="28" />
+          </StackPanel>
+        </Border>
+        <Border Grid.Column="2" Classes="card" Padding="16,12">
+          <StackPanel Spacing="4">
+            <TextBlock Classes="label" Text="Перестановок" />
+            <TextBlock Text="{Binding Moves}" FontSize="28" />
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <TextBlock Grid.Row="2" Classes="label" Text="Журнал сравнений и перестановок" FontWeight="SemiBold"
+                 Margin="0,0,0,8" />
+      <ListBox x:Name="LogList" Grid.Row="3" Classes="plain" ItemsSource="{Binding Log}"
+               FontFamily="Cascadia Mono, Consolas, Courier New, monospace" FontSize="13" />
+    </Grid>
+  </Grid>
+</UserControl>

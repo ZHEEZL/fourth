@@ -1,0 +1,33 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SortingLab.App.ViewModels"
+        xmlns:views="using:SortingLab.App.Views"
+        x:Class="SortingLab.App.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Алгоритмы сортировки"
+        Width="1360" Height="880" MinWidth="1060" MinHeight="700"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource PageBrush}"
+        FontFamily="{StaticResource UiFontFamily}"
+        Foreground="{StaticResource TextPrimaryBrush}">
+  <!-- Табличные цифры: числа в счётчиках, журнале и таблице встают ровными столбцами. -->
+  <Window.FontFeatures>
+    <FontFeatureCollection>
+      <FontFeature Tag="tnum" Value="1" />
+    </FontFeatureCollection>
+  </Window.FontFeatures>
+
+  <TabControl Padding="0" Margin="16,4,16,0">
+    <TabControl.Styles>
+      <Style Selector="TabItem">
+        <Setter Property="FontSize" Value="16" />
+      </Style>
+    </TabControl.Styles>
+    <TabItem Header="Внутренняя сортировка">
+      <views:InternalSortView DataContext="{Binding InternalSort}" />
+    </TabItem>
+    <TabItem Header="Сортировка слов">
+      <views:WordSortView DataContext="{Binding WordSort}" />
+    </TabItem>
+  </TabControl>
+</Window>
