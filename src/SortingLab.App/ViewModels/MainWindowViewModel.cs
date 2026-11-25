@@ -5,5 +5,7 @@ public sealed class MainWindowViewModel
 {
     public InternalSortViewModel InternalSort { get; } = new();
 
+    public ExternalSortViewModel ExternalSort { get; } = new();
+
     public WordSortViewModel WordSort { get; } = new();
 }

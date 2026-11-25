@@ -1,6 +1,8 @@
-﻿namespace SortingLab.App.Controls;
+﻿using Avalonia.Controls;
 
-public class PlaybackBar_axaml
+namespace SortingLab.App.Controls;
+
+public partial class PlaybackBar : UserControl
 {
-    
+    public PlaybackBar() => InitializeComponent();
 }

@@ -1,7 +1,7 @@
 namespace SortingLab.Core.Visual;
 
 /// <summary>Алгоритм внутренней сортировки, который показывает свою работу по шагам.</summary>
-public interface IVisualSorter
+public interface IVisualSorter: ISorterInfo
 {
     /// <summary>Название алгоритма.</summary>
     string Name { get; }

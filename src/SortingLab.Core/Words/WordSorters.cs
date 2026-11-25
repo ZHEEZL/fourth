@@ -9,5 +9,6 @@ public static class WordSorters
     public static IReadOnlyList<IWordSorter> All { get; } =
     [
         new QuickWordSorter(),
+        new RadixWordSorter(),
     ];
 }

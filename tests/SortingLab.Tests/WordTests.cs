@@ -88,4 +88,57 @@ public class WordTests
             Assert.All(r.AverageMs, ms => Assert.True(ms >= 0));
         });
     }
+    public static IEnumerable<object[]> WordSorterNames => WordSorters.All.Select(s => new object[] { s.Name });
+
+    [Theory]
+    [MemberData(nameof(WordSorterNames))]
+    public void AllWordSortersMatchOrdinalOnMixedAndRussianText(string name)
+    {
+        var sorter = WordSorters.All.Single(s => s.Name == name);
+        string[] words = WordTokenizer.Split("Яблоко, apple, ёлка, don't, арбуз, zebra, apple, a, ab, abc, a");
+        string[] expected = words.Order(StringComparer.Ordinal).ToArray();
+
+        sorter.Sort(words);
+
+        Assert.Equal(expected, words);
+    }
+
+    [Fact]
+    public void RadixSortHandlesEmptyLargeRandomAndDuplicates()
+    {
+        var sorter = new RadixWordSorter();
+        var random = new Random(19);
+        string[] vocab = ["", "a", "ab", "abc", "b", "ba", "zebra", "apple", "don't", "ёлка", "яблоко"];
+
+        for (int n = 0; n <= 400; n += 13)
+        {
+            string[] words = Enumerable.Range(0, n).Select(_ => vocab[random.Next(vocab.Length)]).ToArray();
+            string[] expected = words.Order(StringComparer.Ordinal).ToArray();
+            sorter.Sort(words);
+            Assert.Equal(expected, words);
+        }
+
+        string[] same = Enumerable.Repeat("identical", 1000).ToArray();
+        sorter.Sort(same);
+        Assert.All(same, w => Assert.Equal("identical", w));
+    }
+
+    [Fact]
+    public void FrequencyCounterCountsConsecutiveWordsInSortedArray()
+    {
+        string[] words = WordTokenizer.Split("the cat and the dog and the bird");
+        new RadixWordSorter().Sort(words);
+
+        var counts = WordFrequencyCounter.CountSorted(words);
+
+        Assert.Equal(
+            [
+                new WordFrequency("and", 2),
+                new WordFrequency("bird", 1),
+                new WordFrequency("cat", 1),
+                new WordFrequency("dog", 1),
+                new WordFrequency("the", 3),
+            ],
+            counts);
+    }
 }

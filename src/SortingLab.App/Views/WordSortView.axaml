@@ -7,16 +7,15 @@
              x:DataType="vm:WordSortViewModel"
              FontSize="14">
   <UserControl.Styles>
-    <!-- Столбцы таблицы: числа прижаты вправо, чтобы разряды стояли друг под другом. -->
     <Style Selector="TextBlock.wordsCell">
-      <Setter Property="Width" Value="96" />
+      <Setter Property="Width" Value="92" />
       <Setter Property="TextAlignment" Value="Right" />
-      <Setter Property="Padding" Value="12,8" />
+      <Setter Property="Padding" Value="10,8" />
     </Style>
     <Style Selector="TextBlock.timeCell">
-      <Setter Property="Width" Value="208" />
+      <Setter Property="Width" Value="176" />
       <Setter Property="TextAlignment" Value="Right" />
-      <Setter Property="Padding" Value="12,8" />
+      <Setter Property="Padding" Value="10,8" />
       <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
   </UserControl.Styles>
@@ -44,11 +43,30 @@
       </StackPanel>
     </Grid>
 
-    <!-- Отсортированные слова -->
-    <Grid Grid.Column="2" RowDefinitions="Auto,Auto,*">
+    <!-- Отсортированные слова и частоты -->
+    <Grid Grid.Column="2" RowDefinitions="Auto,Auto,Auto,*">
       <TextBlock Classes="title" Text="Слова по алфавиту" />
-      <TextBlock Grid.Row="1" Classes="label" Text="{Binding SortSummary}" TextWrapping="Wrap" Margin="0,12" />
-      <ListBox Grid.Row="2" Classes="plain" ItemsSource="{Binding SortedWords}" />
+      <TextBlock Grid.Row="1" Classes="label" Text="{Binding SortSummary}" TextWrapping="Wrap" Margin="0,10,0,6" />
+      <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="16" Margin="0,0,0,8">
+        <RadioButton GroupName="WordViewMode" IsChecked="{Binding ShowFrequencies}" Content="Частоты слов" />
+        <RadioButton GroupName="WordViewMode" IsChecked="{Binding ShowAllWords}" Content="Все слова" />
+      </StackPanel>
+
+      <ListBox Grid.Row="3" Classes="plain" ItemsSource="{Binding WordFrequencies}"
+               IsVisible="{Binding ShowFrequencies}">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="words:WordFrequency">
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0" Text="{Binding Word}" />
+              <TextBlock Grid.Column="1" Text="{Binding Count}" FontWeight="SemiBold"
+                         Foreground="{StaticResource TextSecondaryBrush}" Margin="12,0,0,0" />
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+      <ListBox Grid.Row="3" Classes="plain" ItemsSource="{Binding SortedWords}"
+               IsVisible="{Binding ShowAllWords}" />
     </Grid>
 
     <!-- Замеры времени -->
@@ -83,28 +101,27 @@
       <TextBlock Grid.Row="5" Classes="meta" TextWrapping="Wrap" Margin="0,8,0,16"
                  Text="Перед замерами каждый алгоритм несколько раз сортирует небольшой набор без учёта времени, чтобы в результат не попала JIT-компиляция. Каждый запуск сортирует новую копию одних и тех же слов." />
 
-      <!-- Таблица результатов -->
       <Border Grid.Row="6" Classes="card" ClipToBounds="True">
-        <DockPanel>
-          <Border DockPanel.Dock="Top" Background="{StaticResource RaisedBrush}"
-                  BorderBrush="{StaticResource HairlineBrush}" BorderThickness="0,0,0,1">
-            <StackPanel Orientation="Horizontal">
-              <TextBlock Classes="wordsCell label" Text="Слов" FontWeight="SemiBold" />
-              <ItemsControl ItemsSource="{Binding TimeHeaders}">
-                <ItemsControl.ItemsPanel>
-                  <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
-                  </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                  <DataTemplate x:DataType="sys:String">
-                    <TextBlock Classes="timeCell label" Text="{Binding}" FontWeight="SemiBold" />
-                  </DataTemplate>
-                </ItemsControl.ItemTemplate>
-              </ItemsControl>
-            </StackPanel>
-          </Border>
-          <ScrollViewer>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+          <StackPanel>
+            <Border Background="{StaticResource RaisedBrush}"
+                    BorderBrush="{StaticResource HairlineBrush}" BorderThickness="0,0,0,1">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Classes="wordsCell label" Text="Слов" FontWeight="SemiBold" />
+                <ItemsControl ItemsSource="{Binding TimeHeaders}">
+                  <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                  </ItemsControl.ItemsPanel>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="sys:String">
+                      <TextBlock Classes="timeCell label" Text="{Binding}" FontWeight="SemiBold" />
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </Border>
             <ItemsControl ItemsSource="{Binding TableRows}">
               <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="vm:TableRow">
@@ -128,8 +145,8 @@
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
-          </ScrollViewer>
-        </DockPanel>
+          </StackPanel>
+        </ScrollViewer>
       </Border>
     </Grid>
   </Grid>

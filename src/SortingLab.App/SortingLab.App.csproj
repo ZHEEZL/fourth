@@ -26,5 +26,7 @@
          SIL Open Font License 1.1, копирайт и ссылка на лицензию записаны в метаданных файлов. -->
     <AvaloniaResource Include="Assets\Fonts\**" />
   </ItemGroup>
-
+  <ItemGroup>
+    <None Include="..\..\data\*.csv" CopyToOutputDirectory="PreserveNewest" LinkBase="data" />
+  </ItemGroup>
 </Project>

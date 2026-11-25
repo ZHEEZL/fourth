@@ -51,21 +51,8 @@
       </StackPanel>
     </WrapPanel>
 
-    <!-- Управление показом -->
-    <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8"
-                Margin="0,0,0,16">
-      <Button Content="Старт" Classes="accent" MinWidth="96" Command="{Binding StartCommand}" />
-      <Button Content="Пауза" MinWidth="96" Command="{Binding PauseCommand}" />
-      <Button Content="Шаг" MinWidth="80" Command="{Binding StepCommand}" />
-      <Button Content="Сначала" MinWidth="96" Command="{Binding ResetCommand}" />
-      <TextBlock Text="Задержка между шагами" VerticalAlignment="Center" Margin="24,0,0,0"
-                 Foreground="{StaticResource TextSecondaryBrush}" />
-      <Slider Width="240" Minimum="50" Maximum="3000" TickFrequency="50" IsSnapToTickEnabled="True"
-              VerticalAlignment="Center" Value="{Binding DelayMs}" />
-      <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding DelayMs, StringFormat='{}{0:0} мс'}" />
-      <TextBlock Text="{Binding InputError}" Foreground="{StaticResource ErrorBrush}" VerticalAlignment="Center"
-                 Margin="16,0,0,0" IsVisible="{Binding InputError, Converter={x:Static ObjectConverters.IsNotNull}}" />
-    </StackPanel>
+    <!-- Общая панель управления и задержки -->
+    <c:PlaybackBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,16" />
 
     <!-- График на тетрадной клетке -->
     <Border Grid.Row="2" Grid.Column="0" Classes="card" ClipToBounds="True">
@@ -105,50 +92,10 @@
       </StackPanel>
     </WrapPanel>
 
-    <!-- Пояснение к текущему шагу: квадратик того же цвета, что и столбики на графике -->
-    <Border Grid.Row="4" Grid.Column="0" Classes="card" Margin="0,12,0,0" Padding="20,16" MinHeight="112">
-      <StackPanel Spacing="8">
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <Border Classes="swatch" Background="{Binding StepBrush}" />
-          <TextBlock Classes="label" Text="{Binding StepTitle}" FontWeight="SemiBold" />
-        </StackPanel>
-        <TextBlock Text="{Binding Explanation}" TextWrapping="Wrap" FontSize="18" LineHeight="28" />
-      </StackPanel>
-    </Border>
+    <!-- Общая карточка пояснения -->
+    <c:ExplanationCard Grid.Row="4" Grid.Column="0" Margin="0,12,0,0" />
 
-    <!-- Правая колонка: идея алгоритма, счётчики, журнал -->
-    <Grid Grid.Row="2" Grid.RowSpan="3" Grid.Column="2" RowDefinitions="Auto,Auto,Auto,*">
-      <Border Classes="card" Padding="20,16">
-        <StackPanel Spacing="8">
-          <StackPanel Spacing="2">
-            <TextBlock Classes="title" Text="{Binding SelectedAlgorithm.Name}" />
-            <TextBlock Classes="meta" Text="{Binding SelectedAlgorithm.Group}" />
-          </StackPanel>
-          <TextBlock Text="{Binding SelectedAlgorithm.Idea}" TextWrapping="Wrap" LineHeight="20"
-                     Foreground="{StaticResource TextSecondaryBrush}" />
-          <TextBlock Classes="meta" Text="{Binding SelectedAlgorithm.Complexity}" TextWrapping="Wrap" />
-        </StackPanel>
-      </Border>
-
-      <Grid Grid.Row="1" ColumnDefinitions="*,12,*" Margin="0,12">
-        <Border Grid.Column="0" Classes="card" Padding="16,12">
-          <StackPanel Spacing="4">
-            <TextBlock Classes="label" Text="Сравнений" />
-            <TextBlock Text="{Binding Comparisons}" FontSize="28" />
-          </StackPanel>
-        </Border>
-        <Border Grid.Column="2" Classes="card" Padding="16,12">
-          <StackPanel Spacing="4">
-            <TextBlock Classes="label" Text="Перестановок" />
-            <TextBlock Text="{Binding Moves}" FontSize="28" />
-          </StackPanel>
-        </Border>
-      </Grid>
-
-      <TextBlock Grid.Row="2" Classes="label" Text="Журнал сравнений и перестановок" FontWeight="SemiBold"
-                 Margin="0,0,0,8" />
-      <ListBox x:Name="LogList" Grid.Row="3" Classes="plain" ItemsSource="{Binding Log}"
-               FontFamily="Cascadia Mono, Consolas, Courier New, monospace" FontSize="13" />
-    </Grid>
+    <!-- Общая правая колонка: описание, счётчики и журнал -->
+    <c:LogSidebar Grid.Row="2" Grid.RowSpan="3" Grid.Column="2" />
   </Grid>
 </UserControl>

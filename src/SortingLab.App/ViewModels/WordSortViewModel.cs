@@ -11,11 +11,9 @@ using SortingLab.Core.Words;
 namespace SortingLab.App.ViewModels;
 
 /// <summary>Строка таблицы замеров, уже отформатированная для показа.</summary>
-/// <param name="Words">Число слов.</param>
-/// <param name="Times">Время каждого алгоритма в миллисекундах.</param>
 public sealed record TableRow(string Words, IReadOnlyList<string> Times);
 
-/// <summary>Модель вкладки с сортировкой слов и замерами времени.</summary>
+/// <summary>Модель вкладки с сортировкой слов, подсчётом частот и замерами времени.</summary>
 public partial class WordSortViewModel : ObservableObject
 {
     private const int MaxSize = 5_000_000;
@@ -28,6 +26,15 @@ public partial class WordSortViewModel : ObservableObject
 
     [ObservableProperty]
     private IReadOnlyList<string> _sortedWords = [];
+
+    [ObservableProperty]
+    private IReadOnlyList<WordFrequency> _wordFrequencies = [];
+
+    [ObservableProperty]
+    private bool _showFrequencies = true;
+
+    [ObservableProperty]
+    private bool _showAllWords;
 
     [ObservableProperty]
     private string _sortSummary = "Нажмите «Разбить и отсортировать».";
@@ -47,11 +54,9 @@ public partial class WordSortViewModel : ObservableObject
     [ObservableProperty]
     private string _experimentStatus = "";
 
-    /// <summary>Заголовки столбцов со временем, по одному на алгоритм.</summary>
     [ObservableProperty]
     private IReadOnlyList<string> _timeHeaders = [];
 
-    // Последние замеры без форматирования: из них собирается CSV.
     private IReadOnlyList<ExperimentRow> _lastRows = [];
 
     [ObservableProperty]
@@ -64,7 +69,6 @@ public partial class WordSortViewModel : ObservableObject
     public WordSortViewModel()
     {
         _selectedSorter = Sorters[0];
-        // Шапка таблицы известна заранее: по столбцу на каждый алгоритм.
         _timeHeaders = Sorters.Select(s => $"{s.Name}, мс").ToArray();
     }
 
@@ -75,7 +79,7 @@ public partial class WordSortViewModel : ObservableObject
     [RelayCommand]
     private void UseSample() => InputText = SampleText.English;
 
-    /// <summary>Разбивает текст на слова и сортирует их выбранным алгоритмом.</summary>
+    /// <summary>Разбивает текст на слова, сортирует их и подсчитывает частоту каждого слова.</summary>
     [RelayCommand]
     private void SortText()
     {
@@ -84,15 +88,17 @@ public partial class WordSortViewModel : ObservableObject
         SelectedSorter.Sort(words);
         double ms = Stopwatch.GetElapsedTime(start).TotalMilliseconds;
 
+        var frequencies = WordFrequencyCounter.CountSorted(words);
         SortedWords = words;
+        WordFrequencies = frequencies;
+
         SortSummary = words.Length == 0
             ? "В тексте не нашлось ни одного слова."
-            : $"Слов: {words.Length}. Сортировка заняла {ms:0.###} мс.";
+            : $"Слов: {words.Length}, уникальных: {frequencies.Count}. Сортировка заняла {ms:0.###} мс.";
     }
 
     private bool CanRunExperiments() => !IsBusy;
 
-    /// <summary>Замеряет время всех алгоритмов на наборах слов заданных размеров.</summary>
     [RelayCommand(CanExecute = nameof(CanRunExperiments))]
     private async Task RunExperimentsAsync()
     {
@@ -146,10 +152,8 @@ public partial class WordSortViewModel : ObservableObject
         }
     }
 
-    /// <summary>Таблица замеров в формате CSV с разделителем «;», который понимает русская версия Excel.</summary>
     public string BuildCsv()
     {
-        // Число слов пишется без разделителя разрядов, чтобы Excel прочитал его как число.
         var culture = CultureInfo.CurrentCulture;
         var csv = new StringBuilder();
         csv.AppendLine(string.Join(';', TimeHeaders.Prepend("Слов")));
