@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SortingLab.App.ViewModels"
+             x:Class="SortingLab.App.Controls.PlaybackBar"
+             x:DataType="vm:StepPlaybackViewModelBase">
+    <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Старт" Classes="accent" MinWidth="96" Command="{Binding StartCommand}" />
+        <Button Content="Пауза" MinWidth="96" Command="{Binding PauseCommand}" />
+        <Button Content="Шаг" MinWidth="80" Command="{Binding StepCommand}" />
+        <Button Content="Сначала" MinWidth="96" Command="{Binding ResetCommand}" />
+        <TextBlock Text="Задержка между шагами" VerticalAlignment="Center" Margin="24,0,0,0"
+                   Foreground="{StaticResource TextSecondaryBrush}" />
+        <Slider Width="240" Minimum="50" Maximum="3000" TickFrequency="50" IsSnapToTickEnabled="True"
+                VerticalAlignment="Center" Value="{Binding DelayMs}" />
+        <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding DelayMs, StringFormat='{}{0:0} мс'}" />
+        <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource ErrorBrush}" VerticalAlignment="Center"
+                   Margin="16,0,0,0" IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+    </StackPanel>
+</UserControl>
