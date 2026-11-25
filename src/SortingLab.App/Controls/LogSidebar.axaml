@@ -1,0 +1,39 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SortingLab.App.ViewModels"
+             x:Class="SortingLab.App.Controls.LogSidebar"
+             x:DataType="vm:StepPlaybackViewModelBase">
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
+        <Border Classes="card" Padding="20,16">
+            <StackPanel Spacing="8">
+                <StackPanel Spacing="2">
+                    <TextBlock Classes="title" Text="{Binding AlgorithmName}" />
+                    <TextBlock Classes="meta" Text="{Binding AlgorithmGroup}" />
+                </StackPanel>
+                <TextBlock Text="{Binding AlgorithmIdea}" TextWrapping="Wrap" LineHeight="20"
+                           Foreground="{StaticResource TextSecondaryBrush}" />
+                <TextBlock Classes="meta" Text="{Binding AlgorithmComplexity}" TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,12,*" Margin="0,12">
+            <Border Grid.Column="0" Classes="card" Padding="16,12">
+                <StackPanel Spacing="4">
+                    <TextBlock Classes="label" Text="Сравнений" />
+                    <TextBlock Text="{Binding Comparisons}" FontSize="28" />
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="2" Classes="card" Padding="16,12">
+                <StackPanel Spacing="4">
+                    <TextBlock Classes="label" Text="{Binding MovesLabel}" />
+                    <TextBlock Text="{Binding Moves}" FontSize="28" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <TextBlock Grid.Row="2" Classes="label" Text="Журнал сравнений и перестановок" FontWeight="SemiBold"
+                   Margin="0,0,0,8" />
+        <ListBox x:Name="LogList" Grid.Row="3" Classes="plain" ItemsSource="{Binding Log}"
+                 FontFamily="Cascadia Mono, Consolas, Courier New, monospace" FontSize="13" />
+    </Grid>
+</UserControl>

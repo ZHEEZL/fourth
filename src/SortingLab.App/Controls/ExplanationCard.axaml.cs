@@ -1,6 +1,8 @@
-﻿namespace SortingLab.App.Controls;
+﻿using Avalonia.Controls;
 
-public class ExplanationCard_axaml
+namespace SortingLab.App.Controls;
+
+public partial class ExplanationCard : UserControl
 {
-    
+    public ExplanationCard() => InitializeComponent();
 }
